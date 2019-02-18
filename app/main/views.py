@@ -6,6 +6,7 @@ from .. import db,photos
 import markdown2
 from flask_login import login_required, current_user
 import datetime
+from ..requests import random_post
 
 
 # Views
@@ -15,18 +16,21 @@ def index():
     '''
     View root page function that returns the index page and its data
     '''
-    pitches = Pitch.query.all()
-    title = "Pitch-Perfect -- Home"
-    return render_template('index.html', title = title, pitches = pitches)
+    pitches =Pitch.query.order_by(Pitch.date.desc()).all()
+    title = "My Blog -- Home"
+    sambu = random_post()
+    quote = sambu["quote"]
+    quote_author = sambu ["author"]
+    return render_template('index.html', title = title, pitches = pitches, quote = quote , quote_author=quote_author)
 
 
 @main.route('/pitches/<category>')
 def pitches_category(category):
 
     '''
-    View function that returns pitches by category
+    View function that returns blogs by category
     '''
-    title = f'Pitch-Perfect -- {category.upper()}'
+    title = f'My Blog -- {category.upper()}'
     if category == "all":
         pitches = Pitch.query.order_by(Pitch.time.desc())
     else:
@@ -45,7 +49,7 @@ def new_pitch(uname):
     if user is None:
         abort(404)
 
-    title_page = "Pitch-Perfect -- Add New Pitch"
+    title_page = "My Blog -- Add New Post"
 
     if form.validate_on_submit():
 
@@ -79,7 +83,7 @@ def new_comment(uname,pitch_id):
     pitch = Pitch.query.filter_by(id = pitch_id).first()
 
     form = CommentForm()
-    title_page = "Pitch-Perfect -- Comment Pitch"
+    title_page = "My Blog -- Comment Blog"
 
     if form.validate_on_submit():
         title = form.title.data
@@ -103,7 +107,7 @@ def new_comment(uname,pitch_id):
 def display_comments(pitch_id):
     # user = User.query.filter_by(username = current_user).first()
     pitch = Pitch.query.filter_by(id = pitch_id).first()
-    title = "Pitch-Perfect -- Comments"
+    title = "My Blog -- Comments"
     comments = Comment.get_comments(pitch_id)
 
     return render_template("display_comments.html", comments = comments,pitch = pitch,title = title)
