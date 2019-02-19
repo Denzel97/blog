@@ -4,7 +4,7 @@ from flask_migrate import Migrate, MigrateCommand
 from app.models import User,Pitch,Comment
 
 # Creating app instance
-app = create_app('production')
+app = create_app('development')
 
 manager = Manager(app)
 migrate = Migrate(app,db)
@@ -18,7 +18,7 @@ def test():
     """Run the unit tests."""
     import unittest
     tests = unittest.TestLoader().discover('tests')
-    unittest.TextTestRunner(verbosity=2).run(testsg)
+    unittest.TextTestRunner(verbosity=2).run(tests)
 
 
 @manager.shell
